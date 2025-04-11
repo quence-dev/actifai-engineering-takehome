@@ -35,26 +35,20 @@ async function start() {
     }
   });
   
-  app.get('/sales-summary', async (req, res) => {
-    const {
-      begin_date,
-      end_date,
-      user_id,
-      min_amount,
-      max_amount,
-    } = req.query;
-    console.log(`Fetching sales data for ${begin_date} to ${end_date}`);
-
-    // TODO: error handling for invalid dates and invalid amounts
-
+  app.get('/user-sales', async (req, res) => {
     try {
-      const result = await db.call('db/get_avg_sales_by_month.sql', {
-        begin_date,
-        end_date,
-        user_id,
-        min_amount,
-        max_amount,
-      });
+      const result = await db.call('db/get_user_sales_summary.sql');
+      res.json(result);
+      console.log(result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error executing query');
+    }
+  });
+
+  app.get('/group-sales', async (req, res) => {
+    try {
+      const result = await db.call('db/get_group_sales_summary.sql');
       res.json(result);
       console.log(result);
     } catch (err) {
