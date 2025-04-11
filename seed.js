@@ -8,7 +8,7 @@ const usersSqlInsert = fs.readFileSync("seedUsers.sql").toString();
 const salesSqlInsert = fs.readFileSync("seedSales.sql").toString();
 
 const pgclient = new Client({
-  host: 'db',
+  host: 'localhost',
   port: '5432',
   user: 'user',
   password: 'pass',
