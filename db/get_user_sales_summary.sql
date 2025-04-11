@@ -9,7 +9,7 @@ WITH grouped_users AS (
   GROUP BY u.id, u.name
 ), grouped_sales AS (
   SELECT 
-    DATE_TRUNC('month', s.date) AS sales_month, -- Truncate date to the first day of the month
+    DATE_TRUNC('month', s.date::DATE) AS sales_month, -- Truncate date to the first day of the month
     gu.user_id,
     gu.user_name,
     gu.group_names,
@@ -17,13 +17,13 @@ WITH grouped_users AS (
     COUNT(s.id) AS total_sales_count -- Total number of sales for the user in the month
   FROM grouped_users gu
   LEFT JOIN sales s ON s.user_id = gu.user_id
-  GROUP BY DATE_TRUNC('month', s.date), gu.user_id, gu.user_name, gu.group_names
+  GROUP BY DATE_TRUNC('month', s.date::DATE), gu.user_id, gu.user_name, gu.group_names
 )
 SELECT 
   gs.sales_month,
   gs.user_name,
   gs.group_names,
-  gs.total_revenue AS user_total_revenue,
-  COALESCE(gs.total_revenue / NULLIF(gs.total_sales_count, 0), 0) AS user_average_revenue -- Average sales for the user in the month
+  gs.total_revenue AS total_revenue,
+  COALESCE(gs.total_revenue / NULLIF(gs.total_sales_count, 0), 0) AS average_revenue -- Average sales for the user in the month
 FROM grouped_sales gs
 ORDER BY gs.sales_month, gs.user_name;

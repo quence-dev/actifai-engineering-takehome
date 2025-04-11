@@ -16,9 +16,6 @@ async function start() {
   // App
   const app = express();
 
-  // Serve static files
-  app.use(express.static(path.join(__dirname, 'public')));
-
   // Health check
   app.get('/health', (req, res) => {
     res.send('Hello World');
@@ -60,6 +57,21 @@ async function start() {
       res.status(500).send('Error executing query');
     }
   });
+
+  if (process.env.NODE_ENV !== 'production') {
+    // Use Vite's development server as middleware
+    const { createServer: createViteServer } = require('vite');
+    const vite = await createViteServer({
+      server: { middlewareMode: 'html' }
+    });
+    app.use(vite.middlewares);
+  } else {
+    // Serve the built frontend files in production
+    app.use(express.static(path.join(__dirname, 'dist')));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    });
+  }
 
   app.listen(PORT, HOST);
   console.log(`Server is running on http://${HOST}:${PORT}`);
