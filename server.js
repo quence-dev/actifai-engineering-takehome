@@ -3,6 +3,7 @@
 const express = require('express');
 const seeder = require('./seed');
 const db = require('./db');
+const path = require('path');
 
 // Constants
 const PORT = 3000;
@@ -14,6 +15,9 @@ async function start() {
 
   // App
   const app = express();
+
+  // Serve static files
+  app.use(express.static(path.join(__dirname, 'public')));
 
   // Health check
   app.get('/health', (req, res) => {
