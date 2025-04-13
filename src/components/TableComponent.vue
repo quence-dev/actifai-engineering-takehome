@@ -1,24 +1,74 @@
 <template>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th v-for="(label, key) in headers" :key="key" :class="isCurrencyField(key) ? 'text-end' : ''">
-          {{ label }}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(row, index) in formattedData" :key="index">
-        <td
-          v-for="(_, key) in headers"
-          :key="key"
-          :class="isCurrencyField(key) ? 'text-end' : ''"
-        >
-          {{ row[key] }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div>
+    <!-- Text-based filter -->
+    <div class="mb-3">
+      <label for="filterInput" class="form-label">Filter by Name</label>
+      <input
+        v-model="filter"
+        id="filterInput"
+        class="form-control"
+        placeholder="Enter name or group"
+      />
+    </div>
+
+    <!-- Range-based filters -->
+    <div class="mb-3">
+      <label class="form-label">Filter by Total Revenue</label>
+      <div class="d-flex gap-2">
+        <input
+          v-model.number="minTotalRevenue"
+          type="number"
+          class="form-control"
+          placeholder="Min Total Revenue"
+        />
+        <input
+          v-model.number="maxTotalRevenue"
+          type="number"
+          class="form-control"
+          placeholder="Max Total Revenue"
+        />
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Filter by Average Revenue</label>
+      <div class="d-flex gap-2">
+        <input
+          v-model.number="minAverageRevenue"
+          type="number"
+          class="form-control"
+          placeholder="Min Average Revenue"
+        />
+        <input
+          v-model.number="maxAverageRevenue"
+          type="number"
+          class="form-control"
+          placeholder="Max Average Revenue"
+        />
+      </div>
+    </div>
+
+    <!-- Table -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th v-for="(label, key) in headers" :key="key" :class="isCurrencyField(key) ? 'text-end' : ''">
+            {{ label }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(row, index) in filteredData" :key="index">
+          <td
+            v-for="(_, key) in headers"
+            :key="key"
+            :class="isCurrencyField(key) ? 'text-end' : ''"
+          >
+            {{ formatCell(row[key], key) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -27,24 +77,66 @@
       data: Array,
       headers: Object // Custom headers mapping
     },
+    data() {
+      return {
+        filter: '', // Text-based filter
+        minTotalRevenue: null, // Min filter for total revenue
+        maxTotalRevenue: null, // Max filter for total revenue
+        minAverageRevenue: null, // Min filter for average revenue
+        maxAverageRevenue: null // Max filter for average revenue
+      };
+    },
     computed: {
-      formattedData() {
-        return this.data.map(row => {
-          const formattedRow = { ...row };
-          if (formattedRow.sales_month) {
-            formattedRow.sales_month = this.formatDate(formattedRow.sales_month);
-          }
-          if (formattedRow.total_revenue) {
-            formattedRow.total_revenue = this.formatAmount(formattedRow.total_revenue);
-          }
-          if (formattedRow.average_revenue) {
-            formattedRow.average_revenue = this.formatAmount(formattedRow.average_revenue);
-          }
-          return formattedRow;
+      filteredData() {
+        console.log('Filters:', {
+          filter: this.filter,
+          minTotalRevenue: this.minTotalRevenue,
+          maxTotalRevenue: this.maxTotalRevenue,
+          minAverageRevenue: this.minAverageRevenue,
+          maxAverageRevenue: this.maxAverageRevenue
         });
+        return this.data.filter(row => this.passesFilters(row));
       }
     },
     methods: {
+      passesFilters(row) {
+        // Text-based filtering for name fields
+        const lowerFilter = this.filter.toLowerCase();
+        const matchesTextFilter =
+          !this.filter ||
+          Object.entries(row).some(([key, value]) => {
+            if (['user_name', 'group_name', 'group_names'].includes(key)) {
+              return String(value).toLowerCase().includes(lowerFilter);
+            }
+            return false;
+          });
+
+        // Range-based filtering for numeric fields
+        const matchesTotalRevenue =
+          (!this.minTotalRevenue || (Number(row.total_revenue) >= this.minTotalRevenue * 100)) &&
+          (!this.maxTotalRevenue || (Number(row.total_revenue) <= this.maxTotalRevenue * 100));
+
+        const matchesAverageRevenue =
+          (!this.minAverageRevenue || (Number(row.average_revenue) >= this.minAverageRevenue * 100)) &&
+          (!this.maxAverageRevenue || (Number(row.average_revenue) <= this.maxAverageRevenue * 100));
+
+        // Debugging logs
+        console.log('Row:', row);
+        console.log('Matches Text Filter:', matchesTextFilter);
+        console.log('Matches Total Revenue:', {matchesTotalRevenue, minTotalRevenue: this.minTotalRevenue, maxTotalRevenue: this.maxTotalRevenue});
+        console.log('Matches Average Revenue:', {matchesAverageRevenue, minAverageRevenue: this.minAverageRevenue, maxAverageRevenue: this.maxAverageRevenue});
+
+        return matchesTextFilter && matchesTotalRevenue && matchesAverageRevenue;
+      },
+      formatCell(value, key) {
+        if (key === 'sales_month') {
+          return this.formatDate(value);
+        }
+        if (this.isCurrencyField(key)) {
+          return this.formatAmount(value);
+        }
+        return value;
+      },
       formatDate(date) {
         const utcDate = new Date(date); // Create a Date object from the input
         const options = { year: 'numeric', month: '2-digit', timeZone: 'UTC' }; // Force UTC timezone
