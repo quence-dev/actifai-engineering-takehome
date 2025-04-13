@@ -43,7 +43,7 @@ define your endpoints.
 1. Install Docker (if you don't already have it)
 2. Run `npm i` to install dependencies
 3. Run `docker-compose up` to compile and run the images.
-4. Run `npm run dev` <!-- New Step -->
+4. Run `npm run dev` to start the development server (hot-reload).
 5. You now have a database and server running on your machine. You can test it by navigating to `http://localhost:3000/health` in
 your browser. You should see a "Hello World" message.
 
