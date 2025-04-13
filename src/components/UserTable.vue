@@ -31,7 +31,6 @@
         try {
           const response = await fetch('/user-sales');
           const result = await response.json();
-          console.log('User Sales Data:', result);
           this.data = result;
         } catch (error) {
           console.error('Error fetching user sales data:', error);

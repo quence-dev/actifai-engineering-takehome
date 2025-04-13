@@ -88,13 +88,6 @@
     },
     computed: {
       filteredData() {
-        console.log('Filters:', {
-          filter: this.filter,
-          minTotalRevenue: this.minTotalRevenue,
-          maxTotalRevenue: this.maxTotalRevenue,
-          minAverageRevenue: this.minAverageRevenue,
-          maxAverageRevenue: this.maxAverageRevenue
-        });
         return this.data.filter(row => this.passesFilters(row));
       }
     },
@@ -119,12 +112,6 @@
         const matchesAverageRevenue =
           (!this.minAverageRevenue || (Number(row.average_revenue) >= this.minAverageRevenue * 100)) &&
           (!this.maxAverageRevenue || (Number(row.average_revenue) <= this.maxAverageRevenue * 100));
-
-        // Debugging logs
-        console.log('Row:', row);
-        console.log('Matches Text Filter:', matchesTextFilter);
-        console.log('Matches Total Revenue:', {matchesTotalRevenue, minTotalRevenue: this.minTotalRevenue, maxTotalRevenue: this.maxTotalRevenue});
-        console.log('Matches Average Revenue:', {matchesAverageRevenue, minAverageRevenue: this.minAverageRevenue, maxAverageRevenue: this.maxAverageRevenue});
 
         return matchesTextFilter && matchesTotalRevenue && matchesAverageRevenue;
       },

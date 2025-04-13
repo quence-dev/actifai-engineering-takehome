@@ -30,7 +30,6 @@
         try {
           const response = await fetch('/group-sales');
           const result = await response.json();
-          console.log('Group Sales Data:', result);
           this.data = result;
         } catch (error) {
           console.error('Error fetching group sales data:', error);
