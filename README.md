@@ -1,5 +1,14 @@
 # Actifai Engineering Takehome
 
+## Conclusions / To-Do's
+
+- Add query by date
+- Pagination
+- Add, update, delete users
+- Tag sales with group ID
+- Visualize the data with a graph
+- Improved error handling inc. user-facing error messages 
+
 ## Introduction
 
 You are an Actifai backend engineer managing a database of our users - who are call center agents - and the sales that
