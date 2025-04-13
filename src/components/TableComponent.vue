@@ -89,10 +89,10 @@
       return {
         showFilters: false, // State to toggle filters visibility
         filter: '', // Text-based filter
-        minTotalRevenue: null, // Min filter for total revenue
-        maxTotalRevenue: null, // Max filter for total revenue
-        minAverageRevenue: null, // Min filter for average revenue
-        maxAverageRevenue: null // Max filter for average revenue
+        minTotalRevenue: null,
+        maxTotalRevenue: null,
+        minAverageRevenue: null,
+        maxAverageRevenue: null
       };
     },
     computed: {

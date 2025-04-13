@@ -25,7 +25,7 @@
     components: { UserTable, GroupTable },
     data() {
       return {
-        currentView: 'UserTable' // Default view
+        currentView: 'UserTable'
       };
     }
   };

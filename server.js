@@ -25,11 +25,9 @@ async function start() {
 
   app.get('/total-sales/:id', async (req, res) => {
     const id = req.params.id;
-    console.log(`Fetching total sales for user ID: ${id}`);
     try {
       const result = await db.call('db/get_total_sales_by_user_id.sql', {user_id: id});
       res.json(result);
-      console.log(result);
     } catch (err) {
       console.error(err);
       res.status(500).send('Error executing query');
@@ -40,7 +38,6 @@ async function start() {
     try {
       const result = await db.call('db/get_user_sales_summary.sql');
       res.json(result);
-      console.log(result);
     } catch (err) {
       console.error(err);
       res.status(500).send('Error executing query');
@@ -51,7 +48,6 @@ async function start() {
     try {
       const result = await db.call('db/get_group_sales_summary.sql');
       res.json(result);
-      console.log(result);
     } catch (err) {
       console.error(err);
       res.status(500).send('Error executing query');
