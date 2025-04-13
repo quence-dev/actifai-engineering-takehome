@@ -1,49 +1,57 @@
 <template>
   <div>
-    <!-- Text-based filter -->
-    <div class="mb-3">
-      <label for="filterInput" class="form-label">Filter by Name</label>
-      <input
-        v-model="filter"
-        id="filterInput"
-        class="form-control"
-        placeholder="Enter name or group"
-      />
-    </div>
+    <!-- Toggle Button -->
+    <button class="btn btn-outline-secondary mb-3" @click="toggleFilters">
+      {{ showFilters ? 'Clear Filters' : 'Filter' }}
+    </button>
 
-    <!-- Range-based filters -->
-    <div class="mb-3">
-      <label class="form-label">Filter by Total Revenue</label>
-      <div class="d-flex gap-2">
+    <!-- Filters Section -->
+    <div v-if="showFilters">
+      <!-- Text-based filter -->
+      <div class="mb-3">
+        <label for="filterInput" class="form-label">Filter by Name</label>
         <input
-          v-model.number="minTotalRevenue"
-          type="number"
+          v-model="filter"
+          id="filterInput"
           class="form-control"
-          placeholder="Min Total Revenue"
-        />
-        <input
-          v-model.number="maxTotalRevenue"
-          type="number"
-          class="form-control"
-          placeholder="Max Total Revenue"
+          placeholder="Enter name or group"
         />
       </div>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Filter by Average Revenue</label>
-      <div class="d-flex gap-2">
-        <input
-          v-model.number="minAverageRevenue"
-          type="number"
-          class="form-control"
-          placeholder="Min Average Revenue"
-        />
-        <input
-          v-model.number="maxAverageRevenue"
-          type="number"
-          class="form-control"
-          placeholder="Max Average Revenue"
-        />
+
+      <!-- Range-based filters -->
+      <div class="mb-3">
+        <label class="form-label">Filter by Total Revenue</label>
+        <div class="d-flex gap-2">
+          <input
+            v-model.number="minTotalRevenue"
+            type="number"
+            class="form-control"
+            placeholder="Min Total Revenue"
+          />
+          <input
+            v-model.number="maxTotalRevenue"
+            type="number"
+            class="form-control"
+            placeholder="Max Total Revenue"
+          />
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Filter by Average Revenue</label>
+        <div class="d-flex gap-2">
+          <input
+            v-model.number="minAverageRevenue"
+            type="number"
+            class="form-control"
+            placeholder="Min Average Revenue"
+          />
+          <input
+            v-model.number="maxAverageRevenue"
+            type="number"
+            class="form-control"
+            placeholder="Max Average Revenue"
+          />
+        </div>
       </div>
     </div>
 
@@ -79,6 +87,7 @@
     },
     data() {
       return {
+        showFilters: false, // State to toggle filters visibility
         filter: '', // Text-based filter
         minTotalRevenue: null, // Min filter for total revenue
         maxTotalRevenue: null, // Max filter for total revenue
@@ -92,6 +101,19 @@
       }
     },
     methods: {
+      toggleFilters() {
+        this.showFilters = !this.showFilters;
+        if(!this.showFilters) {
+          this.resetFilters();
+        }
+      },
+      resetFilters() {
+        this.filter = '';
+        this.minTotalRevenue = null;
+        this.maxTotalRevenue = null;
+        this.minAverageRevenue = null;
+        this.maxAverageRevenue = null;
+      },
       passesFilters(row) {
         // Text-based filtering for name fields
         const lowerFilter = this.filter.toLowerCase();
